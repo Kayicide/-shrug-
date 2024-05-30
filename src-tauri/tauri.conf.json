@@ -1,7 +1,7 @@
 {
   "productName": "shrug",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "me.kayde.shrug",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -26,5 +26,10 @@
     "icon": [
       "icons/shrug.ico"
     ]
+  },
+  "plugins": {
+    "fs": {
+      "scope": ["$APPCONFIG/*"]
+    }
   }
 }
