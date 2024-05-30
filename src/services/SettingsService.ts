@@ -1,3 +1,4 @@
+import { appConfigDir } from "@tauri-apps/api/path";
 import { exists, BaseDirectory, mkdir, writeFile, readFile } from "@tauri-apps/plugin-fs";
 
 
@@ -7,25 +8,37 @@ export module SettingsService {
         path: string;
     }
     
-    export const defaultSettings: Settings = {
-        path: "",
-    }; 
+    let blankSettings: Settings = {
+        path: ""
+    };
 
-    export let Settings: Settings = defaultSettings;
+    async function createDefaultSettings() {
+        return {
+            path: await appConfigDir() + "/audio"
+        } as Settings
+    }
+
+    export let Settings: Settings = blankSettings;
 
     export async function create() {
-        await exists('', {baseDir: BaseDirectory.AppConfig}).then(async (exists) => {
-                if(!exists){
-                    await mkdir('', {baseDir: BaseDirectory.AppConfig});
-                    let encoder = new TextEncoder();
-                    let data = encoder.encode(JSON.stringify(defaultSettings));
-                    await writeFile("config.json", data, {baseDir: BaseDirectory.AppConfig});
-                }else{
-                        readFile("config.json", {baseDir: BaseDirectory.AppConfig}).then((data) => {
-                                let decoder = new TextDecoder();
-                                Settings = JSON.parse(decoder.decode(data)) as Settings;
-                        });
-                }
+        await exists('', {baseDir: BaseDirectory.AppConfig}).then(async (dirExists) => {
+                if(!dirExists) await mkdir('', {baseDir: BaseDirectory.AppConfig});
+              
+                await exists("config.json", {baseDir: BaseDirectory.AppConfig}).then(async (fileExists) => {
+                    if(!fileExists){
+                        let encoder = new TextEncoder();
+                        let defaultConfig = await createDefaultSettings();
+                        let data = encoder.encode(JSON.stringify(defaultConfig));
+                        await writeFile("config.json", data, {baseDir: BaseDirectory.AppConfig});
+                        mkdir(defaultConfig.path, {baseDir: BaseDirectory.AppData});
+                    }
+                });
+
+                readFile("config.json", {baseDir: BaseDirectory.AppConfig}).then((data) => {
+                        let decoder = new TextDecoder();
+                        Settings = JSON.parse(decoder.decode(data)) as Settings;
+                });
+                
             });
     }
 
