@@ -11,11 +11,10 @@ function App() {
 
   return (
     <div class="flex flex-1 flex-col overflow-auto justify-center gap-6 text-center">
-        <div class="flex justify-center">
+        <div class="flex flex-1 justify-center">
           <div class="flex flex-row items-center align-middle">
-
+              <AudioRecorder fileName="TestFile" fileLocation={path()}></AudioRecorder>
           </div>
-          <AudioRecorder fileName="TestFile" fileLocation={path()}></AudioRecorder>
         </div>
     </div>
   );
