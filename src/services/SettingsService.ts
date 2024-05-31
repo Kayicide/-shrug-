@@ -1,5 +1,6 @@
 import { appConfigDir } from "@tauri-apps/api/path";
 import { exists, BaseDirectory, mkdir, writeFile, readFile } from "@tauri-apps/plugin-fs";
+import { LogHelper } from "./LogHelper";
 
 export interface UserSettings {
     path: string;
@@ -9,8 +10,11 @@ export interface UserSettings {
 class SettingsService {
     private static instance: SettingsService;
     private settings: UserSettings | null = null;
+    private settingsLoaded: Promise<void>;
 
-    private constructor() {}
+    private constructor() {
+        this.settingsLoaded = this.loadSettings();
+    }
 
     static getInstance(): SettingsService {
         if (!SettingsService.instance) {
@@ -20,7 +24,7 @@ class SettingsService {
     }
 
     async createSettings(): Promise<void> {
-        console.log('[SHRUG]: Creating user settings file');
+        LogHelper.log('Creating user settings file');
         try{
             await exists('', {baseDir: BaseDirectory.AppConfig}).then(async (dirExists) => {
                 if(!dirExists) await mkdir('', {baseDir: BaseDirectory.AppConfig});
@@ -43,12 +47,12 @@ class SettingsService {
                 });
             });
         }catch (error) {
-            console.error('Error creating config file:', error);
+            LogHelper.error('Error creating config file:', error);
         }
     }
 
     async loadSettings(): Promise<void> {
-        console.log('[SHRUG]: Loading user settings file');
+        LogHelper.log('Loading user settings file');
         if (this.settings) return;
         try {
             await exists('config.json', {baseDir: BaseDirectory.AppConfig}).then(async (fileExists) => {
@@ -62,11 +66,12 @@ class SettingsService {
                 });
             });
         } catch (error) {
-            console.error('Error reading config file:', error);
+            LogHelper.error('Error reading config file:', error);
         }
     }
 
-    getSettings(): UserSettings | null {
+    async getSettings(): Promise<UserSettings | null> {
+        await this.settingsLoaded;
         return this.settings;
     }
 }

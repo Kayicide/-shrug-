@@ -9,12 +9,14 @@ function App() {
 
   createEffect(async () => {
       await settingsService.loadSettings();
-      let settings = settingsService.getSettings()
+      let settings = await settingsService.getSettings()
       setPath(settings!.path);
   });
 
   createEffect(async () => {
-    setDay(await dayService.getDayNumber());
+    let dayNumber = await dayService.getDayNumber();
+    console.log('day number:', dayNumber);
+    setDay(dayNumber);
   });
 
   return (

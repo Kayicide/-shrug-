@@ -7,6 +7,9 @@ import App from "./App";
 import Layout from "./components/Layout";
 import Settings from "./pages/Settings";
 import Day from "./pages/Day";
+import settingsService from "./services/SettingsService";
+
+await settingsService.loadSettings();
 
 render(() => (
     <Router root={Layout}>

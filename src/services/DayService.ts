@@ -9,9 +9,22 @@ export interface Day{
 
 class DayService {
     private static instance: DayService;
-    private settings: UserSettings | null = settingsService.getSettings();
+    private settings: UserSettings | null = null;
+    private settingsLoaded: Promise<void>;
 
-    private constructor() {}
+    private constructor() {
+        this.settingsLoaded = this.initializeSettings();
+    }
+
+    private async initializeSettings() {
+        this.settings = await settingsService.getSettings();
+    }
+
+    private async ensureSettingsInitialized(): Promise<void> {
+        if (!this.settings) {
+            await this.settingsLoaded;
+        }
+    }
 
     static getInstance(): DayService {
         if (!DayService.instance) {
@@ -21,9 +34,9 @@ class DayService {
     }
 
     async getDayNumber(): Promise<number> {
-        if(this.settings === null) return 0;
+        await this.ensureSettingsInitialized();
 
-        let date = new Date(moment(this.settings.startDate, "DD-MM-YYYY").toString());
+        let date = new Date(moment(this.settings!.startDate, "DD-MM-YYYY").toString());
         return moment(new Date()).diff(moment(date), 'days') + 1; 
     }
 }
