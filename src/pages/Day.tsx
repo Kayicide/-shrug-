@@ -2,7 +2,7 @@
 function Day() {
     return (
         <div>
-            lol
+            Day
         </div>
     );
 }

@@ -1,23 +1,10 @@
-import { HiSolidArrowLeft, HiSolidArrowLeftCircle, HiSolidBackspace, HiSolidBackward, HiSolidChevronLeft, HiSolidCog6Tooth } from "solid-icons/hi";
-import { Match, Show, Switch, createSignal } from "solid-js";
-import { open } from "@tauri-apps/plugin-dialog";
+import { HiSolidChevronLeft, HiSolidCog6Tooth } from "solid-icons/hi";
+import { Match, Switch } from "solid-js";
 import { A, useLocation } from "@solidjs/router";
 
 export default function Header() {
-    const [path, setPath] = createSignal<string>("");
     const location = useLocation();
-
-
-    const filePath = async () => {
-        var path = await open({
-            title: 'Audio Files',
-            directory: true
-        });
-        if(path === null) return;
-        setPath(path);
-    }
-    
-    
+        
     return (
         <header class="flex flex-row justify-between p-2">
             <div class="flex items-center justify-start w-28">
