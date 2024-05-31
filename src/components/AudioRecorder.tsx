@@ -1,7 +1,7 @@
 import { Show, createResource, createSignal } from 'solid-js';
 
 
-export default function AudioRecorder(props: {fileName: string, fileLocation: string}){
+export default function AudioRecorder(props: {day: number, fileName: string, fileLocation: string}){
     const mimeType: string = "audio/webm";
     const [stream, setStream] = createSignal<MediaStream>();
     const [recording, setRecording] = createSignal(false);
@@ -68,6 +68,8 @@ export default function AudioRecorder(props: {fileName: string, fileLocation: st
             setAudioChunks([]);
         }
     };
+
+    console.log('day in audio recorder:', props.day);
     
     return (
         <div>
@@ -84,6 +86,7 @@ export default function AudioRecorder(props: {fileName: string, fileLocation: st
                     <audio controls src={audioUrl()}></audio>
                 </Show>
                 <div>
+                    <p class="text-sm font-semibold">Day: {props.day}</p>
                     <p class="text-sm font-semibold">File Name: {props.fileName}</p>
                     <p class="text-sm font-semibold">File Location: {props.fileLocation}</p>
                 </div>
